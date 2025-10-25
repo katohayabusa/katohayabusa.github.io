@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Crypto Dashboard - SUI/USDC, WAL/USDC, SOL/USDC (Binance API)</title>
+
+    <script src="https://unpkg.com/lightweight-charts@3.8.0/dist/lightweight-charts.standalone.production.js"></script>
+
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            background: linear-gradient(135deg,#1e3c72 0%,#2a5298 50%,#7e22ce 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            color:#fff; padding:8px; min-height:100vh; /* Margine esterno ridotto */
+        }
+        .dashboard {
+            max-width: 1200px; /* Ridotto per compattezza */
+            margin: 0 auto;
+        }
+        .charts-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px; /* Ridotto da 20px */
+            align-items: center; /* Centra verticalmente */
+        }
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 4px; /* Ridotto da 8px */
+            padding-right: 8px; /* Ridotto da 20px */
+            min-width: 60px; /* Ridotto da 100px */
+        }
+        .controls button {
+            padding: 4px; /* Ridotto da 8px */
+            border-radius: 4px; /* Leggermente più piccolo */
+            border: 1px solid rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.05);
+            color: #fff;
+            cursor: pointer;
+            font-size: 12px; /* Ridotto per compattezza */
+            transition: background 0.2s;
+        }
+        .controls button.active {
+            background: rgba(59,130,246,0.3);
+            border-color: #3b82f6;
+        }
+        .controls button:hover {
+            background: rgba(255,255,255,0.1);
+        }
+        .chart-container {
+            background: rgba(15,23,42,0.95);
+            border-radius: 8px; /* Ridotto da 12px */
+            padding: 8px; /* Ridotto da 12px */
+            border: 1px solid rgba(255,255,255,0.06);
+            flex: 1;
+            min-width: 280px; /* Ridotto da 300px */
+            max-width: 400px; /* Ridotto da 480px */
+        }
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px; /* Ridotto da 8px */
+        }
+        .pair-name {
+            font-weight: 700;
+            font-size: 14px; /* Ridotto da 16px */
+            text-transform: lowercase;
+        }
+        .price-info { text-align: right; }
+        .current-price { font-size: 16px; font-weight: 700; } /* Ridotto da 18px */
+        .price-change { font-size: 12px; padding: 2px 6px; border-radius: 4px; margin-top: 3px; display: inline-block; } /* Ridotto */
+        .positive { color: #10b981; background: rgba(16,185,129,0.08); }
+        .negative { color: #ef4444; background: rgba(239,68,68,0.08); }
+        .chart-wrapper { height: 360px; position: relative; } /* Ridotto da 420px per compattezza */
+        .tooltip {
+            position: absolute;
+            background: rgba(0,0,0,0.8);
+            color: #fff;
+            padding: 6px; /* Ridotto da 8px */
+            border-radius: 4px;
+            font-size: 11px; /* Ridotto da 12px */
+            pointer-events: none;
+            z-index: 1000;
+            display: none;
+        }
+        .error-message {
+            color: #ef4444;
+            font-size: 12px; /* Ridotto da 14px */
+            text-align: center;
+            margin-top: 6px; /* Ridotto da 10px */
+        }
+        .loading-message {
+            color: #3b82f6;
+            font-size: 12px; /* Ridotto da 14px */
+            text-align: center;
+            margin-top: 6px; /* Ridotto da 10px */
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <div class="charts-row">
+            <div class="controls">
+                <button onclick="changeTimeframe('1m')" id="timeframe-1m">1m</button>
+                <button onclick="changeTimeframe('5m')" id="timeframe-5m">5m</button>
+                <button onclick="changeTimeframe('15m')" id="timeframe-15m" class="active">15m</button>
+                <button onclick="changeTimeframe('1h')" id="timeframe-1h">1h</button>
+                <button onclick="changeTimeframe('4h')" id="timeframe-4h">4h</button>
+                <button onclick="changeTimeframe('1d')" id="timeframe-1d">1d</button>
+            </div>
+            <div class="chart-container">
+                <div class="chart-header">
+                    <div>
+                        <div class="pair-name" id="pairname-SUI">sui-usdc</div>
+                    </div>
+                    <div class="price-info">
+                        <div class="current-price" id="price-SUI">-</div>
+                        <div class="price-change" id="change-SUI">-</div>
+                    </div>
+                </div>
+                <div class="chart-wrapper" id="chartwrap-SUI">
+                    <div class="tooltip" id="tooltip-SUI"></div>
+                </div>
+                <div class="error-message" id="error-message-SUI" style="display: none;"></div>
+                <div class="loading-message" id="loading-message-SUI" style="display: none;">Caricamento...</div>
+            </div>
+            <div class="chart-container">
+                <div class="chart-header">
+                    <div>
+                        <div class="pair-name" id="pairname-WAL">wal-usdc</div>
+                    </div>
+                    <div class="price-info">
+                        <div class="current-price" id="price-WAL">-</div>
+                        <div class="price-change" id="change-WAL">-</div>
+                    </div>
+                </div>
+                <div class="chart-wrapper" id="chartwrap-WAL">
+                    <div class="tooltip" id="tooltip-WAL"></div>
+                </div>
+                <div class="error-message" id="error-message-WAL" style="display: none;"></div>
+                <div class="loading-message" id="loading-message-WAL" style="display: none;">Caricamento...</div>
+            </div>
+            <div class="chart-container">
+                <div class="chart-header">
+                    <div>
+                        <div class="pair-name" id="pairname-SOL">sol-usdc</div>
+                    </div>
+                    <div class="price-info">
+                        <div class="current-price" id="price-SOL">-</div>
+                        <div class="price-change" id="change-SOL">-</div>
+                    </div>
+                </div>
+                <div class="chart-wrapper" id="chartwrap-SOL">
+                    <div class="tooltip" id="tooltip-SOL"></div>
+                </div>
+                <div class="error-message" id="error-message-SOL" style="display: none;"></div>
+                <div class="loading-message" id="loading-message-SOL" style="display: none;">Caricamento...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const BINANCE_API_URL = 'https://api.binance.com/api/v3/klines';
+        const BINANCE_WS_URL = 'wss://stream.binance.com:9443/ws/';
+        const pairs = [
+            { symbol: 'SUIUSDC', id: 'SUI' },
+            { symbol: 'WALUSDC', id: 'WAL' },
+            { symbol: 'SOLUSDC', id: 'SOL' }
+        ];
+        let currentTimeframe = '15m';
+        let charts = {};
+        let websockets = {};
+
+        function binanceIntervalToParam(interval) {
+            const map = { '1m': '1m', '5m': '5m', '15m': '15m', '1h': '1h', '4h': '4h', '1d': '1d' };
+            return map[interval] || '15m';
+        }
+
+        function minutesToSeconds(interval) {
+            const map = { '1m': 60, '5m': 300, '15m': 900, '1h': 3600, '4h': 14400, '1d': 86400 };
+            return map[interval] || 900;
+        }
+
+        async function fetchBinanceKlines(symbol, interval, limit = 100) {
+            try {
+                console.log(`Fetching Binance data for ${symbol}, timeframe: ${interval}, limit: ${limit}`);
+                const binanceInterval = binanceIntervalToParam(interval);
+                const url = `${BINANCE_API_URL}?symbol=${symbol}&interval=${binanceInterval}&limit=${limit}`;
+                console.log(`Request URL: ${url}`);
+                const response = await fetch(url);
+                if (!response.ok) throw new Error(`Binance API error: ${response.status} ${response.statusText}`);
+                const data = await response.json();
+                console.log(`Raw Binance response for ${symbol}:`, data);
+                if (!Array.isArray(data) || data.length === 0) throw new Error(`No candles data for ${symbol}`);
+                const formattedCandles = data
+                    .map(c => ({
+                        time: Math.floor(c[0] / 1000), // Timestamp in secondi
+                        open: parseFloat(c[1]),
+                        high: parseFloat(c[2]),
+                        low: parseFloat(c[3]),
+                        close: parseFloat(c[4])
+                    }))
+                    .sort((a, b) => a.time - b.time)
+                    .slice(-limit);
+                console.log(`Processed ${formattedCandles.length} candles for ${symbol}`);
+                return formattedCandles;
+            } catch (e) {
+                console.error(`Binance fetch failed for ${symbol}:`, e);
+                throw e;
+            }
+        }
+
+        function calculateSMA(data, period = 20) {
+            const sma = [];
+            for (let i = 0; i < data.length; i++) {
+                if (i < period - 1) continue;
+                const slice = data.slice(i - period + 1, i + 1);
+                const avg = slice.reduce((sum, k) => sum + k.close, 0) / period;
+                sma.push({ time: data[i].time, value: avg });
+            }
+            console.log('Calculated SMA:', sma);
+            return sma;
+        }
+
+        function createChart(pair, data) {
+            const { id } = pair;
+            console.log(`Creating chart for ${id} with data:`, data);
+            const chartDiv = document.getElementById(`chartwrap-${id}`);
+            chartDiv.style.width = '100%';
+            chartDiv.style.height = '360px';
+
+            const chart = LightweightCharts.createChart(chartDiv, {
+                layout: { backgroundColor: 'rgba(0,0,0,0)', textColor: '#d1d5db' },
+                grid: { vertLines: { color: 'rgba(255,255,255,0.03)' }, horzLines: { color: 'rgba(255,255,255,0.03)' } },
+                rightPriceScale: { borderColor: 'rgba(255,255,255,0.06)' },
+                timeScale: { borderColor: 'rgba(255,255,255,0.06)' },
+                localization: { timeFormatter: t => new Date(t * 1000).toLocaleString() },
+                crosshair: { mode: LightweightCharts.CrosshairMode.Normal }
+            });
+
+            const candleSeries = chart.addCandlestickSeries({
+                upColor: '#10b981',
+                downColor: '#ef4444',
+                borderVisible: true,
+                wickVisible: true
+            });
+
+            const smaSeries = chart.addLineSeries({
+                color: '#3b82f6',
+                lineWidth: 2,
+                title: 'SMA 20'
+            });
+
+            candleSeries.setData(data);
+            smaSeries.setData(calculateSMA(data));
+
+            chart.timeScale().fitContent();
+
+            // Gestione del crosshair per il tooltip
+            const tooltip = document.getElementById(`tooltip-${id}`);
+            chart.subscribeCrosshairMove(param => {
+                if (!param.time || !param.seriesPrices) {
+                    tooltip.style.display = 'none';
+                    return;
+                }
+                const price = param.seriesPrices.get(candleSeries);
+                if (price) {
+                    const { open, high, low, close } = price;
+                    tooltip.innerHTML = `
+                        Tempo: ${new Date(param.time * 1000).toLocaleString()}<br>
+                        Open: ${open.toFixed(2)}<br>
+                        High: ${high.toFixed(2)}<br>
+                        Low: ${low.toFixed(2)}<br>
+                        Close: ${close.toFixed(2)}
+                    `;
+                    tooltip.style.display = 'block';
+                    tooltip.style.left = `${param.point.x + 10}px`;
+                    tooltip.style.top = `${param.point.y + 10}px`;
+                }
+            });
+
+            chart.subscribeCrosshairMove(param => {
+                if (!param.time) {
+                    tooltip.style.display = 'none';
+                }
+            });
+
+            updateStats(pair, data[data.length - 1]);
+            window.addEventListener('resize', () => {
+                chart.resize(chartDiv.clientWidth, chartDiv.clientHeight);
+            });
+
+            charts[id] = { chart, candleSeries, smaSeries, data };
+            console.log(`Chart created successfully for ${id}`);
+        }
+
+        function updateStats(pair, lastCandle) {
+            const { id } = pair;
+            const priceEl = document.getElementById(`price-${id}`);
+            const changeEl = document.getElementById(`change-${id}`);
+
+            const price = lastCandle.close;
+            if (priceEl) priceEl.textContent = `$${price.toFixed(2)}`;
+
+            const changePct = lastCandle.open ? ((lastCandle.close - lastCandle.open) / lastCandle.open) * 100 : 0;
+            if (changeEl) {
+                changeEl.textContent = `${changePct >= 0 ? '+' : ''}${changePct.toFixed(2)}%`;
+                changeEl.className = `price-change ${changePct >= 0 ? 'positive' : 'negative'}`;
+            }
+            console.log(`Stats updated for ${id}:`, { price, changePct });
+        }
+
+        function showError(pair, message) {
+            const { id } = pair;
+            const errorEl = document.getElementById(`error-message-${id}`);
+            errorEl.textContent = message;
+            errorEl.style.display = 'block';
+            console.error(`Error displayed for ${id}:`, message);
+        }
+
+        function clearError(pair) {
+            const { id } = pair;
+            const errorEl = document.getElementById(`error-message-${id}`);
+            errorEl.textContent = '';
+            errorEl.style.display = 'none';
+        }
+
+        function showLoading(pair) {
+            const { id } = pair;
+            const loadingEl = document.getElementById(`loading-message-${id}`);
+            loadingEl.style.display = 'block';
+        }
+
+        function hideLoading(pair) {
+            const { id } = pair;
+            const loadingEl = document.getElementById(`loading-message-${id}`);
+            loadingEl.style.display = 'none';
+        }
+
+        function updateTimeframeButtons(selectedTimeframe) {
+            const timeframes = ['1m', '5m', '15m', '1h', '4h', '1d'];
+            timeframes.forEach(tf => {
+                const button = document.getElementById(`timeframe-${tf}`);
+                if (button) {
+                    button.classList.toggle('active', tf === selectedTimeframe);
+                }
+            });
+        }
+
+        function changeTimeframe(timeframe) {
+            currentTimeframe = timeframe;
+            console.log('Timeframe changed to:', currentTimeframe);
+            updateTimeframeButtons(currentTimeframe);
+            pairs.forEach(pair => {
+                if (websockets[pair.id]) {
+                    console.log(`Closing WebSocket for ${pair.id} due to timeframe change`);
+                    websockets[pair.id].close();
+                    delete websockets[pair.id];
+                }
+            });
+            // Ritardo di 500ms prima di aggiornare tutti i grafici
+            setTimeout(() => refreshAll(), 500);
+        }
+
+        function startWebSocket(pair, interval, retryCount = 0) {
+            const { symbol, id } = pair;
+            if (websockets[id]) websockets[id].close();
+            const binanceInterval = binanceIntervalToParam(interval);
+            const ws = new WebSocket(`${BINANCE_WS_URL}${symbol.toLowerCase()}@kline_${binanceInterval}`);
+            websockets[id] = ws;
+
+            ws.onopen = () => {
+                console.log(`WebSocket connected for ${id} (${binanceInterval})`);
+                clearError(pair);
+            };
+
+            ws.onmessage = (event) => {
+                const message = JSON.parse(event.data);
+                const kline = message.k;
+                if (!kline || kline.x === false) return; // Ignora candele incomplete
+                const newCandle = {
+                    time: Math.floor(kline.t / 1000),
+                    open: parseFloat(kline.o),
+                    high: parseFloat(kline.h),
+                    low: parseFloat(kline.l),
+                    close: parseFloat(kline.c)
+                };
+                console.log(`New WebSocket candle for ${id}:`, newCandle);
+
+                const intervalSeconds = minutesToSeconds(interval);
+                const alignedTime = Math.floor(newCandle.time / intervalSeconds) * intervalSeconds;
+                const chartData = charts[id].data;
+                const lastCandle = chartData[chartData.length - 1];
+
+                if (lastCandle && lastCandle.time === alignedTime) {
+                    lastCandle.high = Math.max(lastCandle.high, newCandle.high);
+                    lastCandle.low = Math.min(lastCandle.low, newCandle.low);
+                    lastCandle.close = newCandle.close;
+                    chartData[chartData.length - 1] = lastCandle;
+                } else {
+                    chartData.push(newCandle);
+                    if (chartData.length > 100) chartData.shift();
+                }
+
+                charts[id].candleSeries.setData(chartData);
+                charts[id].smaSeries.setData(calculateSMA(chartData));
+                updateStats(pair, chartData[chartData.length - 1]);
+                charts[id].chart.timeScale().scrollToRealTime();
+            };
+
+            ws.onerror = () => {
+                console.error(`Binance WebSocket error for ${id}, retry attempt ${retryCount + 1}`);
+                if (retryCount < 3) {
+                    setTimeout(() => {
+                        console.log(`Retrying WebSocket for ${id}, attempt ${retryCount + 1}`);
+                        startWebSocket(pair, interval, retryCount + 1);
+                    }, 2000);
+                } else {
+                    showError(pair, `Errore persistente WebSocket per ${symbol}. Verifica la connessione o il simbolo.`);
+                }
+            };
+
+            ws.onclose = () => {
+                console.log(`WebSocket closed for ${id}`);
+            };
+        }
+
+        async function refreshChart(pair) {
+            const { id } = pair;
+            try {
+                showLoading(pair);
+                clearError(pair);
+                const candles = await fetchBinanceKlines(pair.symbol, currentTimeframe);
+                if (candles.length === 0) throw new Error(`No candles generated for ${id}`);
+                const chartDiv = document.getElementById(`chartwrap-${id}`);
+                chartDiv.innerHTML = `<div class="tooltip" id="tooltip-${id}"></div>`;
+                createChart(pair, candles);
+                startWebSocket(pair, currentTimeframe);
+            } catch (e) {
+                showError(pair, `Errore: ${e.message}. Verifica se ${pair.symbol} è disponibile su Binance.`);
+            } finally {
+                hideLoading(pair);
+            }
+        }
+
+        async function refreshAll() {
+            pairs.forEach(pair => refreshChart(pair));
+        }
+
+        window.addEventListener('load', () => {
+            console.log('Page loaded, starting refresh for all charts');
+            updateTimeframeButtons(currentTimeframe);
+            refreshAll();
+        });
+    </script>
+</body>
+</html>
