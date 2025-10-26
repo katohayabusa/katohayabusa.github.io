@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Pawtato Resources Dashboard - CRYSTAL/COAL/WATER</title>
+    <title>Pawtato Resources Dashboard - Cetus DEX</title>
 
     <script src="https://unpkg.com/lightweight-charts@3.8.0/dist/lightweight-charts.standalone.production.js"></script>
 
@@ -12,19 +12,19 @@
         body {
             background: linear-gradient(135deg,#1e3c72 0%,#2a5298 50%,#7e22ce 100%);
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            color:#fff; padding:8px; min-height:100vh;
+            color:#fff; padding:12px; min-height:100vh;
         }
         .dashboard {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
         }
         .header {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 24px;
             padding: 20px;
         }
         .header h1 {
-            font-size: 24px;
+            font-size: 28px;
             margin-bottom: 8px;
         }
         .header p {
@@ -34,91 +34,115 @@
         .charts-row {
             display: flex;
             flex-wrap: wrap;
-            gap: 8px;
+            gap: 12px;
             align-items: flex-start;
         }
         .controls {
             display: flex;
             flex-direction: column;
-            gap: 4px;
-            padding-right: 8px;
-            min-width: 60px;
+            gap: 6px;
+            padding-right: 12px;
+            min-width: 70px;
         }
         .controls button {
-            padding: 4px;
-            border-radius: 4px;
+            padding: 6px 8px;
+            border-radius: 6px;
             border: 1px solid rgba(255,255,255,0.2);
             background: rgba(255,255,255,0.05);
             color: #fff;
             cursor: pointer;
-            font-size: 12px;
-            transition: background 0.2s;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.2s;
         }
         .controls button.active {
-            background: rgba(59,130,246,0.3);
+            background: rgba(59,130,246,0.4);
             border-color: #3b82f6;
+            box-shadow: 0 0 12px rgba(59,130,246,0.3);
         }
         .controls button:hover {
-            background: rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.15);
+            transform: translateY(-1px);
         }
         .chart-container {
             background: rgba(15,23,42,0.95);
-            border-radius: 8px;
-            padding: 12px;
-            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 10px;
+            padding: 14px;
+            border: 1px solid rgba(255,255,255,0.08);
             flex: 1;
-            min-width: 300px;
-            max-width: 380px;
+            min-width: 320px;
+            max-width: 420px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
         }
         .chart-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
         }
         .pair-name {
             font-weight: 700;
-            font-size: 14px;
+            font-size: 15px;
             text-transform: uppercase;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
         }
         .resource-icon {
-            font-size: 18px;
+            font-size: 20px;
         }
         .price-info { text-align: right; }
-        .current-price { font-size: 16px; font-weight: 700; }
-        .price-change { font-size: 12px; padding: 2px 6px; border-radius: 4px; margin-top: 3px; display: inline-block; }
-        .positive { color: #10b981; background: rgba(16,185,129,0.08); }
-        .negative { color: #ef4444; background: rgba(239,68,68,0.08); }
-        .neutral { color: #6b7280; background: rgba(107,114,128,0.08); }
-        .chart-wrapper { height: 320px; position: relative; }
+        .current-price { 
+            font-size: 18px; 
+            font-weight: 700;
+            font-family: 'Courier New', monospace;
+        }
+        .price-change { 
+            font-size: 12px; 
+            padding: 3px 8px; 
+            border-radius: 4px; 
+            margin-top: 4px; 
+            display: inline-block;
+            font-weight: 600;
+        }
+        .positive { color: #10b981; background: rgba(16,185,129,0.12); }
+        .negative { color: #ef4444; background: rgba(239,68,68,0.12); }
+        .neutral { color: #6b7280; background: rgba(107,114,128,0.12); }
+        .chart-wrapper { height: 300px; position: relative; }
         .pool-info {
             font-size: 11px;
             color: rgba(255,255,255,0.5);
             margin-bottom: 4px;
         }
+        .volume-info {
+            font-size: 10px;
+            color: rgba(255,255,255,0.4);
+            margin-top: 6px;
+        }
         .error-message {
             color: #ef4444;
-            font-size: 12px;
+            font-size: 11px;
             text-align: center;
-            margin-top: 6px;
+            margin-top: 8px;
             padding: 8px;
-            background: rgba(239,68,68,0.1);
-            border-radius: 4px;
+            background: rgba(239,68,68,0.15);
+            border-radius: 6px;
+            border: 1px solid rgba(239,68,68,0.3);
         }
         .loading-message {
             color: #3b82f6;
             font-size: 12px;
             text-align: center;
-            margin-top: 6px;
+            margin-top: 8px;
+            padding: 8px;
+            background: rgba(59,130,246,0.1);
+            border-radius: 6px;
         }
         .last-update {
             font-size: 10px;
-            color: rgba(255,255,255,0.4);
+            color: rgba(255,255,255,0.35);
             text-align: center;
-            margin-top: 4px;
+            margin-top: 6px;
         }
     </style>
 </head>
@@ -126,23 +150,22 @@
     <div class="dashboard">
         <div class="header">
             <h1>🥔 Pawtato Resources Dashboard</h1>
-            <p>Prezzi in tempo reale da CoinGecko per token SUI Network</p>
+            <p>Real-time prices from Cetus DEX on SUI Network via GeckoTerminal</p>
         </div>
         <div class="charts-row">
             <div class="controls">
-                <button onclick="changeTimeframe('5m')" id="timeframe-5m">5m</button>
-                <button onclick="changeTimeframe('1h')" id="timeframe-1h" class="active">1h</button>
-                <button onclick="changeTimeframe('6h')" id="timeframe-6h">6h</button>
-                <button onclick="changeTimeframe('1d')" id="timeframe-1d">1d</button>
+                <button onclick="changeTimeframe('minute')" id="timeframe-minute">1m</button>
+                <button onclick="changeTimeframe('hour')" id="timeframe-hour" class="active">1h</button>
+                <button onclick="changeTimeframe('day')" id="timeframe-day">1d</button>
             </div>
             <div class="chart-container">
                 <div class="chart-header">
                     <div>
                         <div class="pair-name">
                             <span class="resource-icon">💎</span>
-                            <span id="pairname-CRYSTAL">CRYSTAL</span>
+                            <span>CRYSTAL</span>
                         </div>
-                        <div class="pool-info">CoinGecko Data</div>
+                        <div class="pool-info">Cetus Pool • SUI Network</div>
                     </div>
                     <div class="price-info">
                         <div class="current-price" id="price-CRYSTAL">-</div>
@@ -150,6 +173,7 @@
                     </div>
                 </div>
                 <div class="chart-wrapper" id="chartwrap-CRYSTAL"></div>
+                <div class="volume-info" id="volume-CRYSTAL"></div>
                 <div class="last-update" id="update-CRYSTAL"></div>
                 <div class="error-message" id="error-message-CRYSTAL" style="display: none;"></div>
                 <div class="loading-message" id="loading-message-CRYSTAL">Caricamento dati...</div>
@@ -159,9 +183,9 @@
                     <div>
                         <div class="pair-name">
                             <span class="resource-icon">⛏️</span>
-                            <span id="pairname-COAL">COAL</span>
+                            <span>COAL</span>
                         </div>
-                        <div class="pool-info">CoinGecko Data</div>
+                        <div class="pool-info">Cetus Pool • SUI Network</div>
                     </div>
                     <div class="price-info">
                         <div class="current-price" id="price-COAL">-</div>
@@ -169,6 +193,7 @@
                     </div>
                 </div>
                 <div class="chart-wrapper" id="chartwrap-COAL"></div>
+                <div class="volume-info" id="volume-COAL"></div>
                 <div class="last-update" id="update-COAL"></div>
                 <div class="error-message" id="error-message-COAL" style="display: none;"></div>
                 <div class="loading-message" id="loading-message-COAL">Caricamento dati...</div>
@@ -178,9 +203,9 @@
                     <div>
                         <div class="pair-name">
                             <span class="resource-icon">💧</span>
-                            <span id="pairname-WATER">WATER</span>
+                            <span>WATER</span>
                         </div>
-                        <div class="pool-info">CoinGecko Data</div>
+                        <div class="pool-info">Cetus Pool • SUI Network</div>
                     </div>
                     <div class="price-info">
                         <div class="current-price" id="price-WATER">-</div>
@@ -188,114 +213,229 @@
                     </div>
                 </div>
                 <div class="chart-wrapper" id="chartwrap-WATER"></div>
+                <div class="volume-info" id="volume-WATER"></div>
                 <div class="last-update" id="update-WATER"></div>
                 <div class="error-message" id="error-message-WATER" style="display: none;"></div>
                 <div class="loading-message" id="loading-message-WATER">Caricamento dati...</div>
             </div>
+            <div class="chart-container">
+                <div class="chart-header">
+                    <div>
+                        <div class="pair-name">
+                            <span class="resource-icon">🪨</span>
+                            <span>STONE</span>
+                        </div>
+                        <div class="pool-info">Cetus Pool • SUI Network</div>
+                    </div>
+                    <div class="price-info">
+                        <div class="current-price" id="price-STONE">-</div>
+                        <div class="price-change neutral" id="change-STONE">-</div>
+                    </div>
+                </div>
+                <div class="chart-wrapper" id="chartwrap-STONE"></div>
+                <div class="volume-info" id="volume-STONE"></div>
+                <div class="last-update" id="update-STONE"></div>
+                <div class="error-message" id="error-message-STONE" style="display: none;"></div>
+                <div class="loading-message" id="loading-message-STONE">Caricamento dati...</div>
+            </div>
+            <div class="chart-container">
+                <div class="chart-header">
+                    <div>
+                        <div class="pair-name">
+                            <span class="resource-icon">🪙</span>
+                            <span>GOLD</span>
+                        </div>
+                        <div class="pool-info">Cetus Pool • SUI Network</div>
+                    </div>
+                    <div class="price-info">
+                        <div class="current-price" id="price-GOLD">-</div>
+                        <div class="price-change neutral" id="change-GOLD">-</div>
+                    </div>
+                </div>
+                <div class="chart-wrapper" id="chartwrap-GOLD"></div>
+                <div class="volume-info" id="volume-GOLD"></div>
+                <div class="last-update" id="update-GOLD"></div>
+                <div class="error-message" id="error-message-GOLD" style="display: none;"></div>
+                <div class="loading-message" id="loading-message-GOLD">Caricamento dati...</div>
+            </div>
+            <div class="chart-container">
+                <div class="chart-header">
+                    <div>
+                        <div class="pair-name">
+                            <span class="resource-icon">🪵</span>
+                            <span>WOOD</span>
+                        </div>
+                        <div class="pool-info">Cetus Pool • SUI Network</div>
+                    </div>
+                    <div class="price-info">
+                        <div class="current-price" id="price-WOOD">-</div>
+                        <div class="price-change neutral" id="change-WOOD">-</div>
+                    </div>
+                </div>
+                <div class="chart-wrapper" id="chartwrap-WOOD"></div>
+                <div class="volume-info" id="volume-WOOD"></div>
+                <div class="last-update" id="update-WOOD"></div>
+                <div class="error-message" id="error-message-WOOD" style="display: none;"></div>
+                <div class="loading-message" id="loading-message-WOOD">Caricamento dati...</div>
+            </div>
+            <div class="chart-container">
+                <div class="chart-header">
+                    <div>
+                        <div class="pair-name">
+                            <span class="resource-icon">⚙️</span>
+                            <span>IRON</span>
+                        </div>
+                        <div class="pool-info">Cetus Pool • SUI Network</div>
+                    </div>
+                    <div class="price-info">
+                        <div class="current-price" id="price-IRON">-</div>
+                        <div class="price-change neutral" id="change-IRON">-</div>
+                    </div>
+                </div>
+                <div class="chart-wrapper" id="chartwrap-IRON"></div>
+                <div class="volume-info" id="volume-IRON"></div>
+                <div class="last-update" id="update-IRON"></div>
+                <div class="error-message" id="error-message-IRON" style="display: none;"></div>
+                <div class="loading-message" id="loading-message-IRON">Caricamento dati...</div>
+            </div>
         </div>
     </div>
 
-
     <script>
-        const COINGECKO_API = 'https://api.coingecko.com/api/v3/simple/price';
-
-        // Inserisci gli ID CoinGecko corretti per i token
-        const tokens = {
-            CRYSTAL: 'defi-kingdoms-crystal',
-            COAL: 'coal-token',           // Sostituisci con ID CoinGecko corretto se esiste
-            WATER: 'water-token'          // Sostituisci con ID CoinGecko corretto se esiste
-        };
-
-        let currentTimeframe = '1h';
+        const GECKOTERMINAL_API = 'https://api.geckoterminal.com/api/v2';
+        
+        const pairs = [
+            { 
+                poolAddress: '0x674ec30e2e15ecfc3efd01b61a07c254ee68fabdb9af49422cf72461b8191230', 
+                id: 'CRYSTAL',
+                name: 'CRYSTAL',
+                icon: '💎'
+            },
+            { 
+                poolAddress: '0x821412a926b922a96c05f96054f9fa40fbb03d53b87ea865c3d717b58bcb5a46', 
+                id: 'COAL',
+                name: 'COAL',
+                icon: '⛏️'
+            },
+            { 
+                poolAddress: '0x79b48d6da07fe618e13dfc68a3192151cd1b0947c73c8f14f7b1162848cad09a', 
+                id: 'WATER',
+                name: 'WATER',
+                icon: '💧'
+            },
+            { 
+                poolAddress: '0x737b5499193e5d49a57255e494f963d5c755dc75d58a62f8b08de3485b5abcfb', 
+                id: 'STONE',
+                name: 'STONE',
+                icon: '🪨'
+            },
+            { 
+                poolAddress: '0x5e1f0641c75dece7f115c0f66fc8aec37976de068f241d07007ccd7fe88ba452', 
+                id: 'GOLD',
+                name: 'GOLD',
+                icon: '🪙'
+            },
+            { 
+                poolAddress: '0x9902ff893dff2cfd60604795d0460f5694e2f648f5220032bf8c794ff58e6042', 
+                id: 'WOOD',
+                name: 'WOOD',
+                icon: '🪵'
+            },
+            { 
+                poolAddress: '0xf3d0548ba0ba2990dc017aad3a4ec755acff12aeb4398573e2603ea0942bdb5e', 
+                id: 'IRON',
+                name: 'IRON',
+                icon: '⚙️'
+            }
+        ];
+        
+        let currentTimeframe = 'hour';
         let charts = {};
+        let refreshInterval;
 
-        async function fetchCoinGeckoPrice(tokenId) {
+        async function fetchGeckoTerminalData(poolAddress, timeframe) {
             try {
-                const url = `${COINGECKO_API}?ids=${tokenId}&vs_currencies=usd&include_24hr_change=true`;
-                const response = await fetch(url);
-                if (!response.ok) throw new Error(`CoinGecko API error: ${response.status}`);
-                const data = await response.json();
-                if (!data[tokenId]) throw new Error('Token non trovato su CoinGecko');
-
+                console.log(`Fetching GeckoTerminal data for pool ${poolAddress}`);
+                
+                const poolUrl = `${GECKOTERMINAL_API}/networks/sui/pools/${poolAddress}`;
+                const poolResponse = await fetch(poolUrl);
+                
+                if (!poolResponse.ok) {
+                    throw new Error(`GeckoTerminal API error: ${poolResponse.status}`);
+                }
+                
+                const poolData = await poolResponse.json();
+                console.log('Pool data:', poolData);
+                
+                if (!poolData.data) {
+                    throw new Error('Pool non trovato su GeckoTerminal');
+                }
+                
+                const pool = poolData.data.attributes;
+                
+                const ohlcvUrl = `${GECKOTERMINAL_API}/networks/sui/pools/${poolAddress}/ohlcv/${timeframe}`;
+                const ohlcvResponse = await fetch(ohlcvUrl);
+                
+                if (!ohlcvResponse.ok) {
+                    throw new Error(`Errore nel recupero dati OHLCV: ${ohlcvResponse.status}`);
+                }
+                
+                const ohlcvData = await ohlcvResponse.json();
+                console.log('OHLCV data:', ohlcvData);
+                
+                const candles = ohlcvData.data.attributes.ohlcv_list.map(item => ({
+                    time: item[0],
+                    open: parseFloat(item[1]),
+                    high: parseFloat(item[2]),
+                    low: parseFloat(item[3]),
+                    close: parseFloat(item[4])
+                }));
+                
                 return {
-                    currentPrice: data[tokenId].usd,
-                    priceChange24h: data[tokenId].usd_24h_change
+                    candles,
+                    currentPrice: parseFloat(pool.base_token_price_usd || 0),
+                    priceChange24h: parseFloat(pool.price_change_percentage?.h24 || 0),
+                    volume24h: parseFloat(pool.volume_usd?.h24 || 0),
+                    poolName: pool.name
                 };
-            } catch (error) {
-                throw error;
+            } catch (e) {
+                console.error('GeckoTerminal fetch failed:', e);
+                throw e;
             }
-        }
-
-        function generateMockCandles(currentPrice, timeframe, count = 50) {
-            const candles = [];
-            const now = Math.floor(Date.now() / 1000);
-
-            const intervals = {
-                '5m': 300,
-                '1h': 3600,
-                '6h': 21600,
-                '1d': 86400
-            };
-
-            const interval = intervals[timeframe] || 3600;
-            let price = currentPrice * 0.95;
-
-            for (let i = count; i >= 0; i--) {
-                const time = now - (i * interval);
-                const volatility = 0.02;
-
-                const open = price;
-                const changePercent = (Math.random() - 0.5) * volatility;
-                const close = open * (1 + changePercent);
-                const high = Math.max(open, close) * (1 + Math.random() * volatility * 0.5);
-                const low = Math.min(open, close) * (1 - Math.random() * volatility * 0.5);
-
-                candles.push({
-                    time,
-                    open: parseFloat(open.toFixed(8)),
-                    high: parseFloat(high.toFixed(8)),
-                    low: parseFloat(low.toFixed(8)),
-                    close: parseFloat(close.toFixed(8))
-                });
-
-                price = close;
-            }
-
-            candles[candles.length - 1].close = currentPrice;
-
-            return candles;
         }
 
         function createChart(pair, data) {
             const { id } = pair;
-
+            console.log(`Creating chart for ${id}`);
+            
             const chartDiv = document.getElementById(`chartwrap-${id}`);
             if (!chartDiv) return;
-
+            
             chartDiv.innerHTML = '';
-            chartDiv.style.width = '100%';
-            chartDiv.style.height = '320px';
 
             const chart = LightweightCharts.createChart(chartDiv, {
-                layout: {
-                    backgroundColor: 'rgba(0,0,0,0)',
-                    textColor: '#d1d5db'
+                layout: { 
+                    backgroundColor: 'rgba(0,0,0,0)', 
+                    textColor: '#d1d5db' 
                 },
-                grid: {
-                    vertLines: { color: 'rgba(255,255,255,0.03)' },
-                    horzLines: { color: 'rgba(255,255,255,0.03)' }
+                grid: { 
+                    vertLines: { color: 'rgba(255,255,255,0.04)' }, 
+                    horzLines: { color: 'rgba(255,255,255,0.04)' } 
                 },
-                rightPriceScale: {
-                    borderColor: 'rgba(255,255,255,0.06)',
+                rightPriceScale: { 
+                    borderColor: 'rgba(255,255,255,0.08)',
                     scaleMargins: { top: 0.1, bottom: 0.1 }
                 },
-                timeScale: {
-                    borderColor: 'rgba(255,255,255,0.06)',
-                    timeVisible: true
+                timeScale: { 
+                    borderColor: 'rgba(255,255,255,0.08)',
+                    timeVisible: true,
+                    secondsVisible: false
                 },
-                crosshair: {
-                    mode: LightweightCharts.CrosshairMode.Normal
-                }
+                crosshair: { 
+                    mode: LightweightCharts.CrosshairMode.Normal 
+                },
+                width: chartDiv.clientWidth,
+                height: 300
             });
 
             const candleSeries = chart.addCandlestickSeries({
@@ -304,23 +444,26 @@
                 borderVisible: true,
                 wickVisible: true,
                 wickUpColor: '#10b981',
-                wickDownColor: '#ef4444'
+                wickDownColor: '#ef4444',
+                borderUpColor: '#10b981',
+                borderDownColor: '#ef4444'
             });
 
             candleSeries.setData(data.candles);
             chart.timeScale().fitContent();
 
             updateStats(pair, data);
-
-            window.addEventListener('resize', () => {
-                chart.resize(chartDiv.clientWidth, chartDiv.clientHeight);
+            
+            const resizeObserver = new ResizeObserver(() => {
+                chart.resize(chartDiv.clientWidth, 300);
             });
+            resizeObserver.observe(chartDiv);
 
-            charts[id] = { chart, candleSeries, data };
-
+            charts[id] = { chart, candleSeries, data, resizeObserver };
+            
             const updateEl = document.getElementById(`update-${id}`);
             if (updateEl) {
-                updateEl.textContent = `Aggiornato: ${new Date().toLocaleTimeString('it-IT')}`;
+                updateEl.textContent = `Ultimo aggiornamento: ${new Date().toLocaleTimeString('it-IT')}`;
             }
         }
 
@@ -328,6 +471,7 @@
             const { id } = pair;
             const priceEl = document.getElementById(`price-${id}`);
             const changeEl = document.getElementById(`change-${id}`);
+            const volumeEl = document.getElementById(`volume-${id}`);
 
             if (priceEl) {
                 const price = data.currentPrice;
@@ -337,7 +481,17 @@
             if (changeEl && data.priceChange24h !== undefined) {
                 const change = data.priceChange24h;
                 changeEl.textContent = `${change >= 0 ? '+' : ''}${change.toFixed(2)}% 24h`;
-                changeEl.className = `price-change ${change >= 0 ? 'positive' : change < 0 ? 'negative' : 'neutral'}`;
+                changeEl.className = `price-change ${change > 0 ? 'positive' : change < 0 ? 'negative' : 'neutral'}`;
+            }
+
+            if (volumeEl && data.volume24h !== undefined) {
+                const vol = data.volume24h;
+                const volFormatted = vol >= 1000000 
+                    ? `$${(vol / 1000000).toFixed(2)}M` 
+                    : vol >= 1000 
+                    ? `$${(vol / 1000).toFixed(2)}K` 
+                    : `$${vol.toFixed(2)}`;
+                volumeEl.textContent = `Volume 24h: ${volFormatted}`;
             }
         }
 
@@ -372,7 +526,7 @@
         }
 
         function updateTimeframeButtons(selectedTimeframe) {
-            const timeframes = ['5m', '1h', '6h', '1d'];
+            const timeframes = ['minute', 'hour', 'day'];
             timeframes.forEach(tf => {
                 const button = document.getElementById(`timeframe-${tf}`);
                 if (button) {
@@ -383,39 +537,52 @@
 
         function changeTimeframe(timeframe) {
             currentTimeframe = timeframe;
+            console.log('Timeframe changed to:', currentTimeframe);
             updateTimeframeButtons(currentTimeframe);
-
-            refreshAll();
+            
+            if (refreshInterval) {
+                clearInterval(refreshInterval);
+            }
+            
+            setTimeout(() => {
+                refreshAll();
+                startAutoRefresh();
+            }, 300);
         }
 
         async function refreshChart(pair) {
-            const { id } = pair;
+            const { id, poolAddress } = pair;
             try {
                 showLoading(pair);
                 clearError(pair);
-
-                // Fetch dati CoinGecko
-                const priceData = await fetchCoinGeckoPrice(tokens[id]);
-                const currentPrice = priceData.currentPrice;
-                const priceChange24h = priceData.priceChange24h;
-
-                const candles = generateMockCandles(currentPrice, currentTimeframe);
-
-                const data = {
-                    candles,
-                    currentPrice,
-                    priceChange24h
-                };
-
+                
+                const data = await fetchGeckoTerminalData(poolAddress, currentTimeframe);
+                
+                if (!data || !data.candles || data.candles.length === 0) {
+                    throw new Error('Nessun dato disponibile');
+                }
+                
+                if (charts[id]) {
+                    if (charts[id].resizeObserver) {
+                        charts[id].resizeObserver.disconnect();
+                    }
+                    if (charts[id].chart) {
+                        charts[id].chart.remove();
+                    }
+                }
+                
                 createChart(pair, data);
+                console.log(`Chart updated for ${id}`);
             } catch (e) {
-                showError(pair, e.message);
+                console.error(`Error refreshing ${id}:`, e);
+                showError(pair, `${e.message}`);
             } finally {
                 hideLoading(pair);
             }
         }
 
         async function refreshAll() {
+            console.log('Refreshing all charts...');
             for (const pair of pairs) {
                 await refreshChart(pair);
                 await new Promise(resolve => setTimeout(resolve, 500));
@@ -423,16 +590,20 @@
         }
 
         function startAutoRefresh() {
-            setInterval(refreshAll, 60000); // refresh ogni 60 secondi
+            if (refreshInterval) {
+                clearInterval(refreshInterval);
+            }
+            
+            const intervalTime = 60000;
+            
+            refreshInterval = setInterval(() => {
+                console.log('Auto-refresh triggered');
+                refreshAll();
+            }, intervalTime);
         }
 
-        const pairs = [
-            { id: 'CRYSTAL' },
-            { id: 'COAL' },
-            { id: 'WATER' }
-        ];
-
         window.addEventListener('load', () => {
+            console.log('Page loaded, initializing dashboard...');
             updateTimeframeButtons(currentTimeframe);
             refreshAll();
             startAutoRefresh();
@@ -440,4 +611,3 @@
     </script>
 </body>
 </html>
-
