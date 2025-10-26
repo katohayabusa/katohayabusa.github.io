@@ -320,43 +320,43 @@
         
         const pairs = [
             { 
-                poolAddress: '0x674ec30e2e15ecfc3efd01b61a07c254ee68fabdb9af49422cf72461b8191230', 
+                tokenAddress: '0x8574383098c964bf0b95b16f3f4f6d7e94d35680264fb5210d4977a97b85aca7::pawtato_coin_crystal::PAWTATO_COIN_CRYSTAL', 
                 id: 'CRYSTAL',
                 name: 'CRYSTAL',
                 icon: '💎'
             },
             { 
-                poolAddress: '0x821412a926b922a96c05f96054f9fa40fbb03d53b87ea865c3d717b58bcb5a46', 
+                tokenAddress: '0xab66d1392a81c2408b063217d7a4b3d349c25f8d8b74febfa03d0c107ef8ee9a::pawtato_coin_coal::PAWTATO_COIN_COAL', 
                 id: 'COAL',
                 name: 'COAL',
                 icon: '⛏️'
             },
             { 
-                poolAddress: '0x79b48d6da07fe618e13dfc68a3192151cd1b0947c73c8f14f7b1162848cad09a', 
+                tokenAddress: '0xdbc712df0c412a0fcd6d4aec441e9748d05a0db16ff1fbdb04aa233a9eda454d::pawtato_coin_water::PAWTATO_COIN_WATER', 
                 id: 'WATER',
                 name: 'WATER',
                 icon: '💧'
             },
             { 
-                poolAddress: '0x737b5499193e5d49a57255e494f963d5c755dc75d58a62f8b08de3485b5abcfb', 
+                tokenAddress: '0x2d8bd9df53355ac2d2a4fabe4707aed46fc0d993c1a93331b538300bf18644bb::pawtato_coin_stone::PAWTATO_COIN_STONE', 
                 id: 'STONE',
                 name: 'STONE',
                 icon: '🪨'
             },
             { 
-                poolAddress: '0x5e1f0641c75dece7f115c0f66fc8aec37976de068f241d07007ccd7fe88ba452', 
+                tokenAddress: '0xf9d3566bb782d792a93a16a9db69211808048dee1914b64cb7f96a3582258671::pawtato_coin_gold::PAWTATO_COIN_GOLD', 
                 id: 'GOLD',
                 name: 'GOLD',
                 icon: '🪙'
             },
             { 
-                poolAddress: '0x9902ff893dff2cfd60604795d0460f5694e2f648f5220032bf8c794ff58e6042', 
+                tokenAddress: '0x7fc2cf76c338d8b752d0b530e981ff0a9f43101ce981270164eea201fdf57f3a::pawtato_coin_wood::PAWTATO_COIN_WOOD', 
                 id: 'WOOD',
                 name: 'WOOD',
                 icon: '🪵'
             },
             { 
-                poolAddress: '0xf3d0548ba0ba2990dc017aad3a4ec755acff12aeb4398573e2603ea0942bdb5e', 
+                tokenAddress: '0x422d4e84d7eaee54e75c140e2f7ae9503311f516342ef2c6020c8f8be8629024::pawtato_coin_iron::PAWTATO_COIN_IRON', 
                 id: 'IRON',
                 name: 'IRON',
                 icon: '⚙️'
@@ -367,16 +367,16 @@
         let charts = {};
         let refreshInterval;
 
-        async function fetchBirdeyeData(poolAddress, timeframe) {
+        async function fetchBirdeyeData(tokenAddress, timeframe) {
             try {
-                console.log(`Fetching Birdeye data for pool ${poolAddress}, timeframe: ${timeframe}`);
+                console.log(`Fetching Birdeye data for token ${tokenAddress}, timeframe: ${timeframe}`);
                 
                 const headers = {
                     'X-API-KEY': API_KEY,
                     'Accept': 'application/json'
                 };
                 
-                const priceUrl = `${BIRDEYE_API}/defi/price?address=${poolAddress}&chain=sui`;
+                const priceUrl = `${BIRDEYE_API}/defi/price?address=${tokenAddress}&chain=sui`;
                 const priceResponse = await fetch(priceUrl, { headers });
                 
                 if (!priceResponse.ok) {
@@ -386,7 +386,7 @@
                 const priceData = await priceResponse.json();
                 console.log('Price data:', priceData);
                 
-                const ohlcvUrl = `${BIRDEYE_API}/defi/ohlcv?address=${poolAddress}&type=${timeframe}&chain=sui`;
+                const ohlcvUrl = `${BIRDEYE_API}/defi/ohlcv?address=${tokenAddress}&type=${timeframe}&chain=sui`;
                 const ohlcvResponse = await fetch(ohlcvUrl, { headers });
                 
                 if (!ohlcvResponse.ok) {
@@ -619,12 +619,12 @@
         }
 
         async function refreshChart(pair) {
-            const { id, poolAddress } = pair;
+            const { id, tokenAddress } = pair;
             try {
                 showLoading(pair);
                 clearError(pair);
                 
-                const data = await fetchBirdeyeData(poolAddress, currentTimeframe);
+                const data = await fetchBirdeyeData(tokenAddress, currentTimeframe);
                 
                 if (!data || !data.candles || data.candles.length === 0) {
                     throw new Error('Nessun dato disponibile');
