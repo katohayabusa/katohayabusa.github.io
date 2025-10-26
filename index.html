@@ -160,7 +160,7 @@
         <div class="header">
             <h1>🥔 Pawtato Resources Dashboard</h1>
             <p>Real-time prices from Cetus DEX on SUI Network</p>
-            <div class="info">✨ Powered by Birdeye - Dati OHLCV Reali</div>
+            <div class="info">✨ Powered by Birdeye - Auto-refresh ogni 2 minuti</div>
         </div>
         <div class="charts-row">
             <div class="controls">
@@ -653,7 +653,7 @@
             console.log('Refreshing all charts...');
             for (const pair of pairs) {
                 await refreshChart(pair);
-                await new Promise(resolve => setTimeout(resolve, 600));
+                await new Promise(resolve => setTimeout(resolve, 2000));
             }
         }
 
@@ -662,7 +662,7 @@
                 clearInterval(refreshInterval);
             }
             
-            const intervalTime = 60000;
+            const intervalTime = 120000;
             
             refreshInterval = setInterval(() => {
                 console.log('Auto-refresh triggered');
