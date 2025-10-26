@@ -31,6 +31,15 @@
             font-size: 14px;
             color: rgba(255,255,255,0.7);
         }
+        .header .warning {
+            font-size: 12px;
+            color: #fbbf24;
+            margin-top: 8px;
+            padding: 8px;
+            background: rgba(251,191,36,0.1);
+            border-radius: 6px;
+            display: inline-block;
+        }
         .charts-row {
             display: flex;
             flex-wrap: wrap;
@@ -150,13 +159,15 @@
     <div class="dashboard">
         <div class="header">
             <h1>🥔 Pawtato Resources Dashboard</h1>
-            <p>Real-time prices from Cetus DEX on SUI Network via GeckoTerminal</p>
+            <p>Real-time prices from Cetus DEX on SUI Network</p>
+            <div class="warning">⚠️ Dati storici simulati - Prezzi reali da DexScreener</div>
         </div>
         <div class="charts-row">
             <div class="controls">
-                <button onclick="changeTimeframe('minute')" id="timeframe-minute">1m</button>
-                <button onclick="changeTimeframe('hour')" id="timeframe-hour" class="active">1h</button>
-                <button onclick="changeTimeframe('day')" id="timeframe-day">1d</button>
+                <button onclick="changeTimeframe('5m')" id="timeframe-5m">5m</button>
+                <button onclick="changeTimeframe('1h')" id="timeframe-1h" class="active">1h</button>
+                <button onclick="changeTimeframe('6h')" id="timeframe-6h">6h</button>
+                <button onclick="changeTimeframe('1d')" id="timeframe-1d">1d</button>
             </div>
             <div class="chart-container">
                 <div class="chart-header">
@@ -302,7 +313,7 @@
     </div>
 
     <script>
-        const GECKOTERMINAL_API = 'https://api.geckoterminal.com/api/v2';
+        const DEXSCREENER_API = 'https://api.dexscreener.com/latest/dex';
         
         const pairs = [
             { 
@@ -349,59 +360,111 @@
             }
         ];
         
-        let currentTimeframe = 'hour';
+        let currentTimeframe = '1h';
         let charts = {};
         let refreshInterval;
+        let priceHistory = {};
 
-        async function fetchGeckoTerminalData(poolAddress, timeframe) {
+        async function fetchDexScreenerData(poolAddress) {
             try {
-                console.log(`Fetching GeckoTerminal data for pool ${poolAddress}`);
+                console.log(`Fetching DexScreener data for pool ${poolAddress}`);
+                const url = `${DEXSCREENER_API}/pairs/sui/${poolAddress}`;
                 
-                const poolUrl = `${GECKOTERMINAL_API}/networks/sui/pools/${poolAddress}`;
-                const poolResponse = await fetch(poolUrl);
-                
-                if (!poolResponse.ok) {
-                    throw new Error(`GeckoTerminal API error: ${poolResponse.status}`);
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`DexScreener API error: ${response.status}`);
                 }
                 
-                const poolData = await poolResponse.json();
-                console.log('Pool data:', poolData);
+                const result = await response.json();
+                console.log('DexScreener response:', result);
                 
-                if (!poolData.data) {
-                    throw new Error('Pool non trovato su GeckoTerminal');
+                if (!result.pair) {
+                    throw new Error('Pool non trovato su DexScreener');
                 }
                 
-                const pool = poolData.data.attributes;
+                const pair = result.pair;
+                const currentPrice = parseFloat(pair.priceUsd || pair.priceNative || 0);
                 
-                const ohlcvUrl = `${GECKOTERMINAL_API}/networks/sui/pools/${poolAddress}/ohlcv/${timeframe}`;
-                const ohlcvResponse = await fetch(ohlcvUrl);
-                
-                if (!ohlcvResponse.ok) {
-                    throw new Error(`Errore nel recupero dati OHLCV: ${ohlcvResponse.status}`);
+                if (!priceHistory[poolAddress]) {
+                    priceHistory[poolAddress] = [];
                 }
                 
-                const ohlcvData = await ohlcvResponse.json();
-                console.log('OHLCV data:', ohlcvData);
+                priceHistory[poolAddress].push({
+                    timestamp: Math.floor(Date.now() / 1000),
+                    price: currentPrice
+                });
                 
-                const candles = ohlcvData.data.attributes.ohlcv_list.map(item => ({
-                    time: item[0],
-                    open: parseFloat(item[1]),
-                    high: parseFloat(item[2]),
-                    low: parseFloat(item[3]),
-                    close: parseFloat(item[4])
-                }));
+                const maxHistoryLength = 200;
+                if (priceHistory[poolAddress].length > maxHistoryLength) {
+                    priceHistory[poolAddress] = priceHistory[poolAddress].slice(-maxHistoryLength);
+                }
+                
+                const candles = generateCandles(priceHistory[poolAddress], currentTimeframe);
                 
                 return {
                     candles,
-                    currentPrice: parseFloat(pool.base_token_price_usd || 0),
-                    priceChange24h: parseFloat(pool.price_change_percentage?.h24 || 0),
-                    volume24h: parseFloat(pool.volume_usd?.h24 || 0),
-                    poolName: pool.name
+                    currentPrice,
+                    priceChange24h: parseFloat(pair.priceChange?.h24 || 0),
+                    volume24h: parseFloat(pair.volume?.h24 || 0),
+                    liquidity: parseFloat(pair.liquidity?.usd || 0),
+                    txns24h: pair.txns?.h24 || {},
+                    pairAddress: pair.pairAddress
                 };
             } catch (e) {
-                console.error('GeckoTerminal fetch failed:', e);
+                console.error('DexScreener fetch failed:', e);
                 throw e;
             }
+        }
+
+        function generateCandles(history, timeframe) {
+            if (history.length === 0) return [];
+            
+            const intervals = {
+                '5m': 300,
+                '1h': 3600,
+                '6h': 21600,
+                '1d': 86400
+            };
+            
+            const interval = intervals[timeframe] || 3600;
+            const now = Math.floor(Date.now() / 1000);
+            const startTime = now - (50 * interval);
+            
+            const candles = [];
+            const currentPrice = history[history.length - 1].price;
+            
+            for (let i = 0; i < 50; i++) {
+                const time = startTime + (i * interval);
+                const progress = i / 50;
+                
+                const volatility = 0.015;
+                const trendInfluence = (Math.sin(progress * Math.PI * 2) * 0.01);
+                
+                const basePrice = currentPrice * (0.97 + (progress * 0.03));
+                
+                const randomChange = (Math.random() - 0.5) * volatility;
+                const open = basePrice * (1 + trendInfluence + randomChange);
+                
+                const candleVolatility = volatility * 0.6;
+                const close = open * (1 + (Math.random() - 0.5) * candleVolatility);
+                
+                const high = Math.max(open, close) * (1 + Math.random() * candleVolatility * 0.5);
+                const low = Math.min(open, close) * (1 - Math.random() * candleVolatility * 0.5);
+                
+                candles.push({
+                    time,
+                    open: parseFloat(open.toFixed(8)),
+                    high: parseFloat(high.toFixed(8)),
+                    low: parseFloat(low.toFixed(8)),
+                    close: parseFloat(close.toFixed(8))
+                });
+            }
+            
+            candles[candles.length - 1].close = currentPrice;
+            candles[candles.length - 1].high = Math.max(candles[candles.length - 1].high, currentPrice);
+            candles[candles.length - 1].low = Math.min(candles[candles.length - 1].low, currentPrice);
+            
+            return candles;
         }
 
         function createChart(pair, data) {
@@ -491,7 +554,12 @@
                     : vol >= 1000 
                     ? `$${(vol / 1000).toFixed(2)}K` 
                     : `$${vol.toFixed(2)}`;
-                volumeEl.textContent = `Volume 24h: ${volFormatted}`;
+                
+                const txnInfo = data.txns24h 
+                    ? ` • ${(data.txns24h.buys || 0) + (data.txns24h.sells || 0)} txn` 
+                    : '';
+                
+                volumeEl.textContent = `Volume 24h: ${volFormatted}${txnInfo}`;
             }
         }
 
@@ -526,7 +594,7 @@
         }
 
         function updateTimeframeButtons(selectedTimeframe) {
-            const timeframes = ['minute', 'hour', 'day'];
+            const timeframes = ['5m', '1h', '6h', '1d'];
             timeframes.forEach(tf => {
                 const button = document.getElementById(`timeframe-${tf}`);
                 if (button) {
@@ -556,7 +624,7 @@
                 showLoading(pair);
                 clearError(pair);
                 
-                const data = await fetchGeckoTerminalData(poolAddress, currentTimeframe);
+                const data = await fetchDexScreenerData(poolAddress);
                 
                 if (!data || !data.candles || data.candles.length === 0) {
                     throw new Error('Nessun dato disponibile');
@@ -585,7 +653,7 @@
             console.log('Refreshing all charts...');
             for (const pair of pairs) {
                 await refreshChart(pair);
-                await new Promise(resolve => setTimeout(resolve, 500));
+                await new Promise(resolve => setTimeout(resolve, 800));
             }
         }
 
@@ -594,7 +662,7 @@
                 clearInterval(refreshInterval);
             }
             
-            const intervalTime = 60000;
+            const intervalTime = 90000;
             
             refreshInterval = setInterval(() => {
                 console.log('Auto-refresh triggered');
