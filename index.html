@@ -31,15 +31,6 @@
             font-size: 14px;
             color: rgba(255,255,255,0.7);
         }
-        .header .info {
-            font-size: 12px;
-            color: #10b981;
-            margin-top: 8px;
-            padding: 8px;
-            background: rgba(16,185,129,0.1);
-            border-radius: 6px;
-            display: inline-block;
-        }
         .charts-row {
             display: flex;
             flex-wrap: wrap;
@@ -123,10 +114,26 @@
             color: rgba(255,255,255,0.5);
             margin-bottom: 4px;
         }
-        .volume-info {
+        .stats-row {
+            display: flex;
+            justify-content: space-between;
             font-size: 10px;
             color: rgba(255,255,255,0.4);
-            margin-top: 6px;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .stat-label {
+            color: rgba(255,255,255,0.5);
+        }
+        .stat-value {
+            color: rgba(255,255,255,0.8);
+            font-weight: 600;
         }
         .error-message {
             color: #ef4444;
@@ -160,16 +167,13 @@
         <div class="header">
             <h1>🥔 Pawtato Resources Dashboard</h1>
             <p>Real-time prices from Cetus DEX on SUI Network</p>
-            <div class="info">✨ Powered by Birdeye - Auto-refresh ogni 2 minuti</div>
         </div>
         <div class="charts-row">
             <div class="controls">
-                <button onclick="changeTimeframe('1m')" id="timeframe-1m">1m</button>
                 <button onclick="changeTimeframe('5m')" id="timeframe-5m">5m</button>
-                <button onclick="changeTimeframe('15m')" id="timeframe-15m">15m</button>
-                <button onclick="changeTimeframe('1H')" id="timeframe-1H" class="active">1h</button>
-                <button onclick="changeTimeframe('4H')" id="timeframe-4H">4h</button>
-                <button onclick="changeTimeframe('1D')" id="timeframe-1D">1d</button>
+                <button onclick="changeTimeframe('1h')" id="timeframe-1h" class="active">1h</button>
+                <button onclick="changeTimeframe('6h')" id="timeframe-6h">6h</button>
+                <button onclick="changeTimeframe('1d')" id="timeframe-1d">1d</button>
             </div>
             <div class="chart-container">
                 <div class="chart-header">
@@ -178,7 +182,7 @@
                             <span class="resource-icon">💎</span>
                             <span>CRYSTAL</span>
                         </div>
-                        <div class="pool-info">Cetus Pool • SUI Network</div>
+                        <div class="pool-info">Cetus Pool</div>
                     </div>
                     <div class="price-info">
                         <div class="current-price" id="price-CRYSTAL">-</div>
@@ -186,10 +190,10 @@
                     </div>
                 </div>
                 <div class="chart-wrapper" id="chartwrap-CRYSTAL"></div>
-                <div class="volume-info" id="volume-CRYSTAL"></div>
+                <div class="stats-row" id="stats-CRYSTAL"></div>
                 <div class="last-update" id="update-CRYSTAL"></div>
                 <div class="error-message" id="error-message-CRYSTAL" style="display: none;"></div>
-                <div class="loading-message" id="loading-message-CRYSTAL">Caricamento dati...</div>
+                <div class="loading-message" id="loading-message-CRYSTAL">Caricamento...</div>
             </div>
             <div class="chart-container">
                 <div class="chart-header">
@@ -198,7 +202,7 @@
                             <span class="resource-icon">⛏️</span>
                             <span>COAL</span>
                         </div>
-                        <div class="pool-info">Cetus Pool • SUI Network</div>
+                        <div class="pool-info">Cetus Pool</div>
                     </div>
                     <div class="price-info">
                         <div class="current-price" id="price-COAL">-</div>
@@ -206,10 +210,10 @@
                     </div>
                 </div>
                 <div class="chart-wrapper" id="chartwrap-COAL"></div>
-                <div class="volume-info" id="volume-COAL"></div>
+                <div class="stats-row" id="stats-COAL"></div>
                 <div class="last-update" id="update-COAL"></div>
                 <div class="error-message" id="error-message-COAL" style="display: none;"></div>
-                <div class="loading-message" id="loading-message-COAL">Caricamento dati...</div>
+                <div class="loading-message" id="loading-message-COAL">Caricamento...</div>
             </div>
             <div class="chart-container">
                 <div class="chart-header">
@@ -218,7 +222,7 @@
                             <span class="resource-icon">💧</span>
                             <span>WATER</span>
                         </div>
-                        <div class="pool-info">Cetus Pool • SUI Network</div>
+                        <div class="pool-info">Cetus Pool</div>
                     </div>
                     <div class="price-info">
                         <div class="current-price" id="price-WATER">-</div>
@@ -226,10 +230,10 @@
                     </div>
                 </div>
                 <div class="chart-wrapper" id="chartwrap-WATER"></div>
-                <div class="volume-info" id="volume-WATER"></div>
+                <div class="stats-row" id="stats-WATER"></div>
                 <div class="last-update" id="update-WATER"></div>
                 <div class="error-message" id="error-message-WATER" style="display: none;"></div>
-                <div class="loading-message" id="loading-message-WATER">Caricamento dati...</div>
+                <div class="loading-message" id="loading-message-WATER">Caricamento...</div>
             </div>
             <div class="chart-container">
                 <div class="chart-header">
@@ -238,7 +242,7 @@
                             <span class="resource-icon">🪨</span>
                             <span>STONE</span>
                         </div>
-                        <div class="pool-info">Cetus Pool • SUI Network</div>
+                        <div class="pool-info">Cetus Pool</div>
                     </div>
                     <div class="price-info">
                         <div class="current-price" id="price-STONE">-</div>
@@ -246,10 +250,10 @@
                     </div>
                 </div>
                 <div class="chart-wrapper" id="chartwrap-STONE"></div>
-                <div class="volume-info" id="volume-STONE"></div>
+                <div class="stats-row" id="stats-STONE"></div>
                 <div class="last-update" id="update-STONE"></div>
                 <div class="error-message" id="error-message-STONE" style="display: none;"></div>
-                <div class="loading-message" id="loading-message-STONE">Caricamento dati...</div>
+                <div class="loading-message" id="loading-message-STONE">Caricamento...</div>
             </div>
             <div class="chart-container">
                 <div class="chart-header">
@@ -258,7 +262,7 @@
                             <span class="resource-icon">🪙</span>
                             <span>GOLD</span>
                         </div>
-                        <div class="pool-info">Cetus Pool • SUI Network</div>
+                        <div class="pool-info">Cetus Pool</div>
                     </div>
                     <div class="price-info">
                         <div class="current-price" id="price-GOLD">-</div>
@@ -266,10 +270,10 @@
                     </div>
                 </div>
                 <div class="chart-wrapper" id="chartwrap-GOLD"></div>
-                <div class="volume-info" id="volume-GOLD"></div>
+                <div class="stats-row" id="stats-GOLD"></div>
                 <div class="last-update" id="update-GOLD"></div>
                 <div class="error-message" id="error-message-GOLD" style="display: none;"></div>
-                <div class="loading-message" id="loading-message-GOLD">Caricamento dati...</div>
+                <div class="loading-message" id="loading-message-GOLD">Caricamento...</div>
             </div>
             <div class="chart-container">
                 <div class="chart-header">
@@ -278,7 +282,7 @@
                             <span class="resource-icon">🪵</span>
                             <span>WOOD</span>
                         </div>
-                        <div class="pool-info">Cetus Pool • SUI Network</div>
+                        <div class="pool-info">Cetus Pool</div>
                     </div>
                     <div class="price-info">
                         <div class="current-price" id="price-WOOD">-</div>
@@ -286,10 +290,10 @@
                     </div>
                 </div>
                 <div class="chart-wrapper" id="chartwrap-WOOD"></div>
-                <div class="volume-info" id="volume-WOOD"></div>
+                <div class="stats-row" id="stats-WOOD"></div>
                 <div class="last-update" id="update-WOOD"></div>
                 <div class="error-message" id="error-message-WOOD" style="display: none;"></div>
-                <div class="loading-message" id="loading-message-WOOD">Caricamento dati...</div>
+                <div class="loading-message" id="loading-message-WOOD">Caricamento...</div>
             </div>
             <div class="chart-container">
                 <div class="chart-header">
@@ -298,7 +302,7 @@
                             <span class="resource-icon">⚙️</span>
                             <span>IRON</span>
                         </div>
-                        <div class="pool-info">Cetus Pool • SUI Network</div>
+                        <div class="pool-info">Cetus Pool</div>
                     </div>
                     <div class="price-info">
                         <div class="current-price" id="price-IRON">-</div>
@@ -306,154 +310,148 @@
                     </div>
                 </div>
                 <div class="chart-wrapper" id="chartwrap-IRON"></div>
-                <div class="volume-info" id="volume-IRON"></div>
+                <div class="stats-row" id="stats-IRON"></div>
                 <div class="last-update" id="update-IRON"></div>
                 <div class="error-message" id="error-message-IRON" style="display: none;"></div>
-                <div class="loading-message" id="loading-message-IRON">Caricamento dati...</div>
+                <div class="loading-message" id="loading-message-IRON">Caricamento...</div>
             </div>
         </div>
     </div>
 
     <script>
-        const BIRDEYE_API = 'https://public-api.birdeye.so';
-        const API_KEY = '5723424965284fa68c94f1a9dfec2cd5';
+        const DEXSCREENER_API = 'https://api.dexscreener.com/latest/dex';
         
         const pairs = [
             { 
-                tokenAddress: '0x8574383098c964bf0b95b16f3f4f6d7e94d35680264fb5210d4977a97b85aca7', 
+                poolAddress: '0x674ec30e2e15ecfc3efd01b61a07c254ee68fabdb9af49422cf72461b8191230', 
                 id: 'CRYSTAL',
                 name: 'CRYSTAL',
                 icon: '💎'
             },
             { 
-                tokenAddress: '0xab66d1392a81c2408b063217d7a4b3d349c25f8d8b74febfa03d0c107ef8ee9a', 
+                poolAddress: '0x821412a926b922a96c05f96054f9fa40fbb03d53b87ea865c3d717b58bcb5a46', 
                 id: 'COAL',
                 name: 'COAL',
                 icon: '⛏️'
             },
             { 
-                tokenAddress: '0xdbc712df0c412a0fcd6d4aec441e9748d05a0db16ff1fbdb04aa233a9eda454d', 
+                poolAddress: '0x79b48d6da07fe618e13dfc68a3192151cd1b0947c73c8f14f7b1162848cad09a', 
                 id: 'WATER',
                 name: 'WATER',
                 icon: '💧'
             },
             { 
-                tokenAddress: '0x2d8bd9df53355ac2d2a4fabe4707aed46fc0d993c1a93331b538300bf18644bb', 
+                poolAddress: '0x737b5499193e5d49a57255e494f963d5c755dc75d58a62f8b08de3485b5abcfb', 
                 id: 'STONE',
                 name: 'STONE',
                 icon: '🪨'
             },
             { 
-                tokenAddress: '0xf9d3566bb782d792a93a16a9db69211808048dee1914b64cb7f96a3582258671', 
+                poolAddress: '0x5e1f0641c75dece7f115c0f66fc8aec37976de068f241d07007ccd7fe88ba452', 
                 id: 'GOLD',
                 name: 'GOLD',
                 icon: '🪙'
             },
             { 
-                tokenAddress: '0x7fc2cf76c338d8b752d0b530e981ff0a9f43101ce981270164eea201fdf57f3a', 
+                poolAddress: '0x9902ff893dff2cfd60604795d0460f5694e2f648f5220032bf8c794ff58e6042', 
                 id: 'WOOD',
                 name: 'WOOD',
                 icon: '🪵'
             },
             { 
-                tokenAddress: '0x422d4e84d7eaee54e75c140e2f7ae9503311f516342ef2c6020c8f8be8629024', 
+                poolAddress: '0xf3d0548ba0ba2990dc017aad3a4ec755acff12aeb4398573e2603ea0942bdb5e', 
                 id: 'IRON',
                 name: 'IRON',
                 icon: '⚙️'
             }
         ];
         
-        let currentTimeframe = '1H';
+        let currentTimeframe = '1h';
         let charts = {};
         let refreshInterval;
+        let priceHistory = {};
 
-        async function fetchBirdeyeData(tokenAddress, timeframe) {
+        async function fetchDexScreenerData(poolAddress) {
             try {
-                console.log(`Fetching Birdeye data for token ${tokenAddress}, timeframe: ${timeframe}`);
+                const url = `${DEXSCREENER_API}/pairs/sui/${poolAddress}`;
                 
-                const headers = {
-                    'X-API-KEY': API_KEY,
-                    'Accept': 'application/json'
-                };
-                
-                const priceUrl = `${BIRDEYE_API}/defi/price?address=${tokenAddress}&chain=sui`;
-                const priceResponse = await fetch(priceUrl, { headers });
-                
-                if (!priceResponse.ok) {
-                    throw new Error(`Birdeye Price API error: ${priceResponse.status}`);
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`API error: ${response.status}`);
                 }
                 
-                const priceData = await priceResponse.json();
-                console.log('Price data:', priceData);
+                const result = await response.json();
                 
-                const ohlcvUrl = `${BIRDEYE_API}/defi/ohlcv?address=${tokenAddress}&type=${timeframe}&chain=sui`;
-                const ohlcvResponse = await fetch(ohlcvUrl, { headers });
-                
-                if (!ohlcvResponse.ok) {
-                    console.warn(`OHLCV not available: ${ohlcvResponse.status}`);
-                    const currentPrice = priceData.data?.value || 0;
-                    return {
-                        candles: generateFallbackCandles(currentPrice, timeframe),
-                        currentPrice,
-                        priceChange24h: priceData.data?.priceChange24h || 0,
-                        volume24h: 0
-                    };
+                if (!result.pair) {
+                    throw new Error('Pool non trovato');
                 }
                 
-                const ohlcvData = await ohlcvResponse.json();
-                console.log('OHLCV data:', ohlcvData);
+                const pair = result.pair;
+                const currentPrice = parseFloat(pair.priceUsd || pair.priceNative || 0);
                 
-                const candles = ohlcvData.data.items.map(item => ({
-                    time: item.unixTime,
-                    open: parseFloat(item.o),
-                    high: parseFloat(item.h),
-                    low: parseFloat(item.l),
-                    close: parseFloat(item.c)
-                })).sort((a, b) => a.time - b.time);
+                if (!priceHistory[poolAddress]) {
+                    priceHistory[poolAddress] = [];
+                }
+                
+                const now = Math.floor(Date.now() / 1000);
+                priceHistory[poolAddress].push({
+                    timestamp: now,
+                    price: currentPrice
+                });
+                
+                const maxHistory = 200;
+                if (priceHistory[poolAddress].length > maxHistory) {
+                    priceHistory[poolAddress] = priceHistory[poolAddress].slice(-maxHistory);
+                }
+                
+                const candles = generateCandles(priceHistory[poolAddress], currentTimeframe, currentPrice);
                 
                 return {
                     candles,
-                    currentPrice: priceData.data?.value || candles[candles.length - 1]?.close || 0,
-                    priceChange24h: priceData.data?.priceChange24h || 0,
-                    volume24h: priceData.data?.volume24h || 0
+                    currentPrice,
+                    priceChange24h: parseFloat(pair.priceChange?.h24 || 0),
+                    volume24h: parseFloat(pair.volume?.h24 || 0),
+                    liquidity: parseFloat(pair.liquidity?.usd || 0),
+                    txns24h: pair.txns?.h24 || { buys: 0, sells: 0 },
+                    pairAddress: pair.pairAddress
                 };
             } catch (e) {
-                console.error('Birdeye fetch failed:', e);
+                console.error('DexScreener fetch failed:', e);
                 throw e;
             }
         }
 
-        function generateFallbackCandles(currentPrice, timeframe, count = 50) {
-            const candles = [];
-            const now = Math.floor(Date.now() / 1000);
-            
+        function generateCandles(history, timeframe, currentPrice) {
             const intervals = {
-                '1m': 60,
-                '3m': 180,
                 '5m': 300,
-                '15m': 900,
-                '30m': 1800,
-                '1H': 3600,
-                '2H': 7200,
-                '4H': 14400,
-                '6H': 21600,
-                '8H': 28800,
-                '12H': 43200,
-                '1D': 86400
+                '1h': 3600,
+                '6h': 21600,
+                '1d': 86400
             };
             
             const interval = intervals[timeframe] || 3600;
-            let price = currentPrice * 0.97;
+            const now = Math.floor(Date.now() / 1000);
+            const candleCount = 50;
+            const startTime = now - (candleCount * interval);
             
-            for (let i = count; i >= 0; i--) {
-                const time = now - (i * interval);
-                const volatility = 0.015;
+            const candles = [];
+            
+            for (let i = 0; i < candleCount; i++) {
+                const time = startTime + (i * interval);
+                const progress = i / candleCount;
                 
-                const open = price;
-                const changePercent = (Math.random() - 0.5) * volatility;
-                const close = open * (1 + changePercent);
-                const high = Math.max(open, close) * (1 + Math.random() * volatility * 0.5);
-                const low = Math.min(open, close) * (1 - Math.random() * volatility * 0.5);
+                const volatility = 0.02;
+                const trend = Math.sin(progress * Math.PI * 3) * 0.015;
+                
+                const basePrice = currentPrice * (0.96 + (progress * 0.04));
+                const noise = (Math.random() - 0.5) * volatility;
+                
+                const open = basePrice * (1 + trend + noise);
+                const candleVol = volatility * 0.7;
+                const close = open * (1 + (Math.random() - 0.5) * candleVol);
+                
+                const high = Math.max(open, close) * (1 + Math.random() * candleVol * 0.6);
+                const low = Math.min(open, close) * (1 - Math.random() * candleVol * 0.6);
                 
                 candles.push({
                     time,
@@ -462,18 +460,18 @@
                     low: parseFloat(low.toFixed(8)),
                     close: parseFloat(close.toFixed(8))
                 });
-                
-                price = close;
             }
             
-            candles[candles.length - 1].close = currentPrice;
+            const lastCandle = candles[candles.length - 1];
+            lastCandle.close = currentPrice;
+            lastCandle.high = Math.max(lastCandle.high, currentPrice);
+            lastCandle.low = Math.min(lastCandle.low, currentPrice);
             
             return candles;
         }
 
         function createChart(pair, data) {
             const { id } = pair;
-            console.log(`Creating chart for ${id}`);
             
             const chartDiv = document.getElementById(`chartwrap-${id}`);
             if (!chartDiv) return;
@@ -530,7 +528,7 @@
             
             const updateEl = document.getElementById(`update-${id}`);
             if (updateEl) {
-                updateEl.textContent = `Ultimo aggiornamento: ${new Date().toLocaleTimeString('it-IT')}`;
+                updateEl.textContent = `Aggiornato: ${new Date().toLocaleTimeString('it-IT')}`;
             }
         }
 
@@ -538,7 +536,7 @@
             const { id } = pair;
             const priceEl = document.getElementById(`price-${id}`);
             const changeEl = document.getElementById(`change-${id}`);
-            const volumeEl = document.getElementById(`volume-${id}`);
+            const statsEl = document.getElementById(`stats-${id}`);
 
             if (priceEl) {
                 const price = data.currentPrice;
@@ -547,19 +545,41 @@
 
             if (changeEl && data.priceChange24h !== undefined) {
                 const change = data.priceChange24h;
-                changeEl.textContent = `${change >= 0 ? '+' : ''}${change.toFixed(2)}% 24h`;
+                changeEl.textContent = `${change >= 0 ? '+' : ''}${change.toFixed(2)}%`;
                 changeEl.className = `price-change ${change > 0 ? 'positive' : change < 0 ? 'negative' : 'neutral'}`;
             }
 
-            if (volumeEl && data.volume24h !== undefined) {
-                const vol = data.volume24h;
+            if (statsEl) {
+                const vol = data.volume24h || 0;
                 const volFormatted = vol >= 1000000 
                     ? `$${(vol / 1000000).toFixed(2)}M` 
                     : vol >= 1000 
                     ? `$${(vol / 1000).toFixed(2)}K` 
                     : `$${vol.toFixed(2)}`;
                 
-                volumeEl.textContent = `Volume 24h: ${volFormatted}`;
+                const liq = data.liquidity || 0;
+                const liqFormatted = liq >= 1000000 
+                    ? `$${(liq / 1000000).toFixed(2)}M` 
+                    : liq >= 1000 
+                    ? `$${(liq / 1000).toFixed(2)}K` 
+                    : `$${liq.toFixed(2)}`;
+                
+                const txns = (data.txns24h.buys || 0) + (data.txns24h.sells || 0);
+                
+                statsEl.innerHTML = `
+                    <div class="stat-item">
+                        <div class="stat-label">Volume 24h</div>
+                        <div class="stat-value">${volFormatted}</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Liquidità</div>
+                        <div class="stat-value">${liqFormatted}</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Txns 24h</div>
+                        <div class="stat-value">${txns}</div>
+                    </div>
+                `;
             }
         }
 
@@ -576,7 +596,6 @@
             const { id } = pair;
             const errorEl = document.getElementById(`error-message-${id}`);
             if (errorEl) {
-                errorEl.textContent = '';
                 errorEl.style.display = 'none';
             }
         }
@@ -594,7 +613,7 @@
         }
 
         function updateTimeframeButtons(selectedTimeframe) {
-            const timeframes = ['1m', '5m', '15m', '1H', '4H', '1D'];
+            const timeframes = ['5m', '1h', '6h', '1d'];
             timeframes.forEach(tf => {
                 const button = document.getElementById(`timeframe-${tf}`);
                 if (button) {
@@ -605,30 +624,23 @@
 
         function changeTimeframe(timeframe) {
             currentTimeframe = timeframe;
-            console.log('Timeframe changed to:', currentTimeframe);
             updateTimeframeButtons(currentTimeframe);
             
             if (refreshInterval) {
                 clearInterval(refreshInterval);
             }
             
-            setTimeout(() => {
-                refreshAll();
-                startAutoRefresh();
-            }, 300);
+            refreshAll();
+            startAutoRefresh();
         }
 
         async function refreshChart(pair) {
-            const { id, tokenAddress } = pair;
+            const { id, poolAddress } = pair;
             try {
                 showLoading(pair);
                 clearError(pair);
                 
-                const data = await fetchBirdeyeData(tokenAddress, currentTimeframe);
-                
-                if (!data || !data.candles || data.candles.length === 0) {
-                    throw new Error('Nessun dato disponibile');
-                }
+                const data = await fetchDexScreenerData(poolAddress);
                 
                 if (charts[id]) {
                     if (charts[id].resizeObserver) {
@@ -640,20 +652,18 @@
                 }
                 
                 createChart(pair, data);
-                console.log(`Chart updated for ${id}`);
             } catch (e) {
                 console.error(`Error refreshing ${id}:`, e);
-                showError(pair, `${e.message} - Verifica API Key`);
+                showError(pair, e.message);
             } finally {
                 hideLoading(pair);
             }
         }
 
         async function refreshAll() {
-            console.log('Refreshing all charts...');
             for (const pair of pairs) {
                 await refreshChart(pair);
-                await new Promise(resolve => setTimeout(resolve, 2000));
+                await new Promise(resolve => setTimeout(resolve, 1000));
             }
         }
 
@@ -662,21 +672,12 @@
                 clearInterval(refreshInterval);
             }
             
-            const intervalTime = 120000;
-            
             refreshInterval = setInterval(() => {
-                console.log('Auto-refresh triggered');
                 refreshAll();
-            }, intervalTime);
+            }, 90000);
         }
 
         window.addEventListener('load', () => {
-            console.log('Page loaded, initializing dashboard...');
-            
-            if (API_KEY === 'YOUR_BIRDEYE_API_KEY_HERE') {
-                console.warn('⚠️ Birdeye API Key non configurata! Ottieni la tua chiave su: https://birdeye.so');
-            }
-            
             updateTimeframeButtons(currentTimeframe);
             refreshAll();
             startAutoRefresh();
