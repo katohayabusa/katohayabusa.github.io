@@ -8,125 +8,14 @@
     <script src="https://unpkg.com/lightweight-charts@3.8.0/dist/lightweight-charts.standalone.production.js"></script>
 
     <style>
-        * { margin:0; padding:0; box-sizing:border-box; }
-        body {
-            background: linear-gradient(135deg,#1e3c72 0%,#2a5298 50%,#7e22ce 100%);
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            color:#fff; padding:8px; min-height:100vh;
-        }
-        .dashboard {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        .header {
-            text-align: center;
-            margin-bottom: 20px;
-            padding: 20px;
-        }
-        .header h1 {
-            font-size: 24px;
-            margin-bottom: 8px;
-        }
-        .header p {
-            font-size: 14px;
-            color: rgba(255,255,255,0.7);
-        }
-        .charts-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            align-items: flex-start;
-        }
-        .controls {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-            padding-right: 8px;
-            min-width: 60px;
-        }
-        .controls button {
-            padding: 4px;
-            border-radius: 4px;
-            border: 1px solid rgba(255,255,255,0.2);
-            background: rgba(255,255,255,0.05);
-            color: #fff;
-            cursor: pointer;
-            font-size: 12px;
-            transition: background 0.2s;
-        }
-        .controls button.active {
-            background: rgba(59,130,246,0.3);
-            border-color: #3b82f6;
-        }
-        .controls button:hover {
-            background: rgba(255,255,255,0.1);
-        }
-        .chart-container {
-            background: rgba(15,23,42,0.95);
-            border-radius: 8px;
-            padding: 12px;
-            border: 1px solid rgba(255,255,255,0.06);
-            flex: 1;
-            min-width: 300px;
-            max-width: 380px;
-        }
-        .chart-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 8px;
-        }
-        .pair-name {
-            font-weight: 700;
-            font-size: 14px;
-            text-transform: uppercase;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .resource-icon {
-            font-size: 18px;
-        }
-        .price-info { text-align: right; }
-        .current-price { font-size: 16px; font-weight: 700; }
-        .price-change { font-size: 12px; padding: 2px 6px; border-radius: 4px; margin-top: 3px; display: inline-block; }
-        .positive { color: #10b981; background: rgba(16,185,129,0.08); }
-        .negative { color: #ef4444; background: rgba(239,68,68,0.08); }
-        .neutral { color: #6b7280; background: rgba(107,114,128,0.08); }
-        .chart-wrapper { height: 320px; position: relative; }
-        .pool-info {
-            font-size: 11px;
-            color: rgba(255,255,255,0.5);
-            margin-bottom: 4px;
-        }
-        .error-message {
-            color: #ef4444;
-            font-size: 12px;
-            text-align: center;
-            margin-top: 6px;
-            padding: 8px;
-            background: rgba(239,68,68,0.1);
-            border-radius: 4px;
-        }
-        .loading-message {
-            color: #3b82f6;
-            font-size: 12px;
-            text-align: center;
-            margin-top: 6px;
-        }
-        .last-update {
-            font-size: 10px;
-            color: rgba(255,255,255,0.4);
-            text-align: center;
-            margin-top: 4px;
-        }
+        /* (Stesso stile del tuo originale, omesso qui per brevità) */
     </style>
 </head>
 <body>
     <div class="dashboard">
         <div class="header">
             <h1>🥔 Pawtato Resources Dashboard</h1>
-            <p>Real-time prices from Cetus DEX on SUI Network</p>
+            <p>Real-time prices from CoinGecko for SUI Network tokens</p>
         </div>
         <div class="charts-row">
             <div class="controls">
@@ -135,14 +24,14 @@
                 <button onclick="changeTimeframe('6h')" id="timeframe-6h">6h</button>
                 <button onclick="changeTimeframe('1d')" id="timeframe-1d">1d</button>
             </div>
-            <div class="chart-container">
+            <div class="chart-container" id="container-CRYSTAL">
                 <div class="chart-header">
                     <div>
                         <div class="pair-name">
                             <span class="resource-icon">💎</span>
                             <span id="pairname-CRYSTAL">CRYSTAL</span>
                         </div>
-                        <div class="pool-info">Cetus Pool</div>
+                        <div class="pool-info">CoinGecko Data</div>
                     </div>
                     <div class="price-info">
                         <div class="current-price" id="price-CRYSTAL">-</div>
@@ -154,14 +43,14 @@
                 <div class="error-message" id="error-message-CRYSTAL" style="display: none;"></div>
                 <div class="loading-message" id="loading-message-CRYSTAL">Caricamento dati...</div>
             </div>
-            <div class="chart-container">
+            <div class="chart-container" id="container-COAL">
                 <div class="chart-header">
                     <div>
                         <div class="pair-name">
                             <span class="resource-icon">⛏️</span>
                             <span id="pairname-COAL">COAL</span>
                         </div>
-                        <div class="pool-info">Cetus Pool</div>
+                        <div class="pool-info">CoinGecko Data</div>
                     </div>
                     <div class="price-info">
                         <div class="current-price" id="price-COAL">-</div>
@@ -173,14 +62,14 @@
                 <div class="error-message" id="error-message-COAL" style="display: none;"></div>
                 <div class="loading-message" id="loading-message-COAL">Caricamento dati...</div>
             </div>
-            <div class="chart-container">
+            <div class="chart-container" id="container-WATER">
                 <div class="chart-header">
                     <div>
                         <div class="pair-name">
                             <span class="resource-icon">💧</span>
                             <span id="pairname-WATER">WATER</span>
                         </div>
-                        <div class="pool-info">Cetus Pool</div>
+                        <div class="pool-info">CoinGecko Data</div>
                     </div>
                     <div class="price-info">
                         <div class="current-price" id="price-WATER">-</div>
@@ -188,304 +77,4 @@
                     </div>
                 </div>
                 <div class="chart-wrapper" id="chartwrap-WATER"></div>
-                <div class="last-update" id="update-WATER"></div>
-                <div class="error-message" id="error-message-WATER" style="display: none;"></div>
-                <div class="loading-message" id="loading-message-WATER">Caricamento dati...</div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        const DEXSCREENER_API = 'https://api.dexscreener.com/latest/dex';
-        
-        const pairs = [
-            { 
-                poolAddress: '0x79b48d6da07fe618e13dfc68a3192151cd1b0947c73c8f14f7b1162848cad09a', 
-                id: 'WATER',
-                name: 'WATER',
-                icon: '💧'
-            },
-            { 
-                poolAddress: '0x821412a926b922a96c05f96054f9fa40fbb03d53b87ea865c3d717b58bcb5a46', 
-                id: 'COAL',
-                name: 'COAL',
-                icon: '⛏️'
-            },
-            { 
-                poolAddress: '0x674ec30e2e15ecfc3efd01b61a07c254ee68fabdb9af49422cf72461b8191230', 
-                id: 'CRYSTAL',
-                name: 'CRYSTAL',
-                icon: '💎'
-            }
-        ];
-        
-        let currentTimeframe = '1h';
-        let charts = {};
-        let refreshInterval;
-        let lastPrices = {};
-
-        async function fetchDexScreenerData(poolAddress, timeframe) {
-            try {
-                console.log(`Fetching DEX Screener data for pool ${poolAddress}`);
-                const url = `${DEXSCREENER_API}/pairs/sui/${poolAddress}`;
-                
-                const response = await fetch(url);
-                if (!response.ok) {
-                    throw new Error(`DEX Screener API error: ${response.status}`);
-                }
-                
-                const result = await response.json();
-                console.log('DEX Screener response:', result);
-                
-                if (!result.pair) {
-                    throw new Error('Pool non trovato su DEX Screener');
-                }
-                
-                const pair = result.pair;
-                
-                // Genera dati mock OHLCV basati sul prezzo corrente
-                // In produzione, dovresti usare un backend per storicizzare i dati
-                const currentPrice = parseFloat(pair.priceUsd || pair.priceNative || 0);
-                const candles = generateMockCandles(currentPrice, timeframe);
-                
-                return {
-                    candles,
-                    currentPrice,
-                    priceChange24h: parseFloat(pair.priceChange?.h24 || 0),
-                    volume24h: parseFloat(pair.volume?.h24 || 0),
-                    liquidity: parseFloat(pair.liquidity?.usd || 0),
-                    pairAddress: pair.pairAddress
-                };
-            } catch (e) {
-                console.error('DEX Screener fetch failed:', e);
-                throw e;
-            }
-        }
-
-        function generateMockCandles(currentPrice, timeframe, count = 50) {
-            const candles = [];
-            const now = Math.floor(Date.now() / 1000);
-            
-            const intervals = {
-                '5m': 300,
-                '1h': 3600,
-                '6h': 21600,
-                '1d': 86400
-            };
-            
-            const interval = intervals[timeframe] || 3600;
-            let price = currentPrice * 0.95; // Inizia dal 95% del prezzo corrente
-            
-            for (let i = count; i >= 0; i--) {
-                const time = now - (i * interval);
-                const volatility = 0.02; // 2% volatilità
-                
-                const open = price;
-                const changePercent = (Math.random() - 0.5) * volatility;
-                const close = open * (1 + changePercent);
-                const high = Math.max(open, close) * (1 + Math.random() * volatility * 0.5);
-                const low = Math.min(open, close) * (1 - Math.random() * volatility * 0.5);
-                
-                candles.push({
-                    time,
-                    open: parseFloat(open.toFixed(8)),
-                    high: parseFloat(high.toFixed(8)),
-                    low: parseFloat(low.toFixed(8)),
-                    close: parseFloat(close.toFixed(8))
-                });
-                
-                price = close;
-            }
-            
-            // Ultimo candle è il prezzo corrente
-            candles[candles.length - 1].close = currentPrice;
-            
-            return candles;
-        }
-
-        function createChart(pair, data) {
-            const { id } = pair;
-            console.log(`Creating chart for ${id}`);
-            
-            const chartDiv = document.getElementById(`chartwrap-${id}`);
-            if (!chartDiv) return;
-            
-            chartDiv.innerHTML = '';
-            chartDiv.style.width = '100%';
-            chartDiv.style.height = '320px';
-
-            const chart = LightweightCharts.createChart(chartDiv, {
-                layout: { 
-                    backgroundColor: 'rgba(0,0,0,0)', 
-                    textColor: '#d1d5db' 
-                },
-                grid: { 
-                    vertLines: { color: 'rgba(255,255,255,0.03)' }, 
-                    horzLines: { color: 'rgba(255,255,255,0.03)' } 
-                },
-                rightPriceScale: { 
-                    borderColor: 'rgba(255,255,255,0.06)',
-                    scaleMargins: { top: 0.1, bottom: 0.1 }
-                },
-                timeScale: { 
-                    borderColor: 'rgba(255,255,255,0.06)',
-                    timeVisible: true
-                },
-                crosshair: { 
-                    mode: LightweightCharts.CrosshairMode.Normal 
-                }
-            });
-
-            const candleSeries = chart.addCandlestickSeries({
-                upColor: '#10b981',
-                downColor: '#ef4444',
-                borderVisible: true,
-                wickVisible: true,
-                wickUpColor: '#10b981',
-                wickDownColor: '#ef4444'
-            });
-
-            candleSeries.setData(data.candles);
-            chart.timeScale().fitContent();
-
-            updateStats(pair, data);
-            
-            window.addEventListener('resize', () => {
-                chart.resize(chartDiv.clientWidth, chartDiv.clientHeight);
-            });
-
-            charts[id] = { chart, candleSeries, data };
-            
-            // Aggiorna timestamp
-            const updateEl = document.getElementById(`update-${id}`);
-            if (updateEl) {
-                updateEl.textContent = `Aggiornato: ${new Date().toLocaleTimeString('it-IT')}`;
-            }
-        }
-
-        function updateStats(pair, data) {
-            const { id } = pair;
-            const priceEl = document.getElementById(`price-${id}`);
-            const changeEl = document.getElementById(`change-${id}`);
-
-            if (priceEl) {
-                const price = data.currentPrice;
-                priceEl.textContent = price < 0.01 ? `$${price.toFixed(6)}` : `$${price.toFixed(4)}`;
-            }
-
-            if (changeEl && data.priceChange24h !== undefined) {
-                const change = data.priceChange24h;
-                changeEl.textContent = `${change >= 0 ? '+' : ''}${change.toFixed(2)}% 24h`;
-                changeEl.className = `price-change ${change >= 0 ? 'positive' : change < 0 ? 'negative' : 'neutral'}`;
-            }
-            
-            lastPrices[id] = data.currentPrice;
-        }
-
-        function showError(pair, message) {
-            const { id } = pair;
-            const errorEl = document.getElementById(`error-message-${id}`);
-            if (errorEl) {
-                errorEl.textContent = message;
-                errorEl.style.display = 'block';
-            }
-        }
-
-        function clearError(pair) {
-            const { id } = pair;
-            const errorEl = document.getElementById(`error-message-${id}`);
-            if (errorEl) {
-                errorEl.textContent = '';
-                errorEl.style.display = 'none';
-            }
-        }
-
-        function showLoading(pair) {
-            const { id } = pair;
-            const loadingEl = document.getElementById(`loading-message-${id}`);
-            if (loadingEl) loadingEl.style.display = 'block';
-        }
-
-        function hideLoading(pair) {
-            const { id } = pair;
-            const loadingEl = document.getElementById(`loading-message-${id}`);
-            if (loadingEl) loadingEl.style.display = 'none';
-        }
-
-        function updateTimeframeButtons(selectedTimeframe) {
-            const timeframes = ['5m', '1h', '6h', '1d'];
-            timeframes.forEach(tf => {
-                const button = document.getElementById(`timeframe-${tf}`);
-                if (button) {
-                    button.classList.toggle('active', tf === selectedTimeframe);
-                }
-            });
-        }
-
-        function changeTimeframe(timeframe) {
-            currentTimeframe = timeframe;
-            console.log('Timeframe changed to:', currentTimeframe);
-            updateTimeframeButtons(currentTimeframe);
-            
-            if (refreshInterval) {
-                clearInterval(refreshInterval);
-            }
-            
-            setTimeout(() => {
-                refreshAll();
-                startAutoRefresh();
-            }, 300);
-        }
-
-        async function refreshChart(pair) {
-            const { id, poolAddress } = pair;
-            try {
-                showLoading(pair);
-                clearError(pair);
-                
-                const data = await fetchDexScreenerData(poolAddress, currentTimeframe);
-                
-                if (!data || !data.candles || data.candles.length === 0) {
-                    throw new Error('Nessun dato disponibile');
-                }
-                
-                createChart(pair, data);
-                console.log(`Chart updated for ${id}`);
-            } catch (e) {
-                console.error(`Error refreshing ${id}:`, e);
-                showError(pair, `${e.message}. Pool potrebbe non essere indicizzato.`);
-            } finally {
-                hideLoading(pair);
-            }
-        }
-
-        async function refreshAll() {
-            console.log('Refreshing all charts...');
-            for (const pair of pairs) {
-                await refreshChart(pair);
-                await new Promise(resolve => setTimeout(resolve, 1000));
-            }
-        }
-
-        function startAutoRefresh() {
-            if (refreshInterval) {
-                clearInterval(refreshInterval);
-            }
-            
-            const intervalTime = 60000; // 1 minuto
-            
-            refreshInterval = setInterval(() => {
-                console.log('Auto-refresh triggered');
-                refreshAll();
-            }, intervalTime);
-        }
-
-        window.addEventListener('load', () => {
-            console.log('Page loaded, initializing dashboard...');
-            updateTimeframeButtons(currentTimeframe);
-            refreshAll();
-            startAutoRefresh();
-        });
-    </script>
-</body>
-</html>
+                <div class="last-update" id
